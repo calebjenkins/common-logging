@@ -1,0 +1,99 @@
+﻿#region License
+
+/*
+ * Copyright 2002-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#endregion
+
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
+
+namespace Common.Logging.MultipleLogger
+{
+    /// <summary>
+    /// A global context for logger variables
+    /// </summary>
+    public class MultiLoggerThreadVariablesContext : IVariablesContext
+    {
+        private readonly List<ILog> _loggers;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MultiLoggerThreadVariablesContext"/> class.
+        /// </summary>
+        /// <param name="loggers">The loggers.</param>
+        public MultiLoggerThreadVariablesContext(IEnumerable<ILog> loggers)
+        {
+            _loggers = loggers.ToList();
+        }
+
+        /// <summary>
+        /// Sets the value of a new or existing variable within the global context
+        /// </summary>
+        /// <param name="key">The key of the variable that is to be added</param>
+        /// <param name="value">The value to add</param>
+        public void Set(string key, object value)
+        {
+            _loggers.ForEach(logger => logger.ThreadVariablesContext.Set(key, value));
+        }
+
+        /// <summary>
+        /// Gets the value of a variable within the global context
+        /// </summary>
+        /// <param name="key">The key of the variable to get</param>
+        /// <returns>The value or null if not found</returns>
+        public object Get(string key)
+        {
+            //note: this impl. assumes that all loggers in the multi-logger collection have the same value for the key
+            // this is a safe assumption *only* because of the enforced semantics around the Set() implementation for this class 
+            var candidate = _loggers.FirstOrDefault(logger => logger.ThreadVariablesContext.Get(key) != null);
+
+            if (null != candidate)
+            {
+                return candidate.ThreadVariablesContext.Get(key); ;
+            }
+
+
+            return null;
+        }
+
+        /// <summary>
+        /// Checks if a variable is set within the global context
+        /// </summary>
+        /// <param name="key">The key of the variable to check for</param>
+        /// <returns>True if the variable is set</returns>
+        public bool Contains(string key)
+        {
+            return _loggers.Any(logger => logger.ThreadVariablesContext.Contains(key));
+        }
+
+        /// <summary>
+        /// Removes a variable from the global context by key
+        /// </summary>
+        /// <param name="key">The key of the variable to remove</param>
+        public void Remove(string key) {
+            _loggers.ForEach(logger => logger.ThreadVariablesContext.Remove(key));
+        }
+
+        /// <summary>
+        /// Clears the global context variables
+        /// </summary>
+        public void Clear() {
+            _loggers.ForEach(logger => logger.ThreadVariablesContext.Clear());
+        }
+    }
+}

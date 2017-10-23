@@ -3,19 +3,19 @@
 ## Project Build Status
 [![Build status](https://ci.appveyor.com/api/projects/status/nyht5oguhan7gk2c/branch/master?svg=true)](https://ci.appveyor.com/project/sbohlen/common-logging/branch/master)
 
+*Note: Build may periodically fail due to issues with the code-coverage tooling (NCover) being unable to reliably connect to the test-runner during test-runs on the CI server platform we've selected (Appveyor).  Work continues to investigate this further, but until resolved properly visitors are advised to discount failing builds reported here. 
 
 ## Introduction
 
 Provides a simple logging abstraction to switch between different logging implementations.
-There is current support for log4net, NLog and Enterprise Library logging.
+There is current support for log4net, NLog, Microsoft Enterprise Library logging, Microsoft Application Insights, Microsoft Event Tracing for Windows, and Serilog.
 
-Additionally Common.Logging comes with a set of base classes making the integration of any log
-system a breeze.
+Additionally Common.Logging comes with a set of base classes making the integration of any log system a breeze.
 
 See also
 
-* [Github](http://github.com/net-commons/common-logging)
-* [Source Forge](http://netcommon.sf.net/)
+* [Github Repo](http://github.com/net-commons/common-logging)
+* [Project Website](http://net-commons.github.io/common-logging)
 * [NuGet](https://www.nuget.org/packages/Common.Logging/): `Install-Package Common.Logging` 
 
 ## Console Quickstart
@@ -111,6 +111,6 @@ The Common Infrastructure Libraries for .NET are released under the terms of the
 
 * Clone the [GitHub repository](https://github.com/net-commons/common-logging) 
 * Install Silverlight SDK 5
-* [Optional] Install Java for the documenation builder
+* [Optional] Install Java for the documentation builder
 * Create a strong name key. `c:\netcommon>sn -k common.net.snk`
 * Build the the solution. `c:\netcommon>build-release.cmd`
